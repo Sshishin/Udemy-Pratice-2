@@ -124,16 +124,21 @@ const modalTrigger = document.querySelectorAll('[data-modal]'),
 
 for(let i = 0; i < modalTrigger.length; i++) {
     modalTrigger[i].addEventListener('click', () => {
-        modal.classList.add('show');
-        modal.classList.remove('hide');
-        document.body.style.overflow = 'hidden';        //Так запрещаем скролл при открытом модальном окне
+        showModal();      
     });
+}
+
+function showModal() {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden'; //Так запрещаем скролл при открытом модальном окне
 }
 
 function closeModal() {
     modal.classList.add('hide');
     modal.classList.remove('show');
     document.body.style.overflow = '';  
+    clearInterval(modalTimerId);       //Если пользователь уже открыл окно, то убираем вызов через время
 }
 
 modalClose.addEventListener('click', () => {
@@ -157,6 +162,20 @@ if(e.code == 'Escape' && modal.classList.contains('show')) {
     closeModal();
 }
 });
+
+// Добавляем вызов окна через какое-то время
+
+const modalTimerId = setTimeout(showModal, 5000);
+
+function showModalByScroll(){
+    if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {       // Если пролистанная часть страницы + видимая часть страницы >= всей страницы то...
+        showModal();
+        window.removeEventListener('scroll',showModalByScroll);     //Делаем так чтобы при долистывании до конца страницы, окно появлялось только один раз
+    }
+}
+
+window.addEventListener('scroll',showModalByScroll);
+    
 
 
 });
