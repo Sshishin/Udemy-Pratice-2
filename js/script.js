@@ -1,3 +1,5 @@
+
+
 //Табы
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,6 +41,8 @@ tabsParent.addEventListener('click', (event) => {
             });
         }
     });
+
+
 
 // ТАЙМЕР
 
@@ -109,7 +113,58 @@ function updateClock () {
 
 setClock ('.timer', deadline);
 
+
+
+
+// Модальное окно
+
+const modalTrigger = document.querySelectorAll('[data-modal]'),
+      modalClose = document.querySelector('[data-close]'),
+      modal = document.querySelector('.modal');
+
+for(let i = 0; i < modalTrigger.length; i++) {
+    modalTrigger[i].addEventListener('click', () => {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';        //Так запрещаем скролл при открытом модальном окне
+    });
+}
+
+function closeModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';  
+}
+
+modalClose.addEventListener('click', () => {
+    closeModal();       //Так говорим чтобы браузер сам определился какое значение ему нужно
 });
+
+
+// Делаем закрытие по темной области вне окна
+
+modal.addEventListener('click', (event) => {
+    if(event.target == modal) {
+        closeModal(); 
+    }
+});
+
+
+// Делаем чтобы окно закрывалось при нажатии кнопки esc
+
+document.addEventListener('keydown', (e) => {
+if(e.code == 'Escape' && modal.classList.contains('show')) {
+    closeModal();
+}
+});
+
+
+});
+
+
+
+
+
 
 
 
