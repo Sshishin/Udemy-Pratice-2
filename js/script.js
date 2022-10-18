@@ -51,7 +51,7 @@ const deadline = '2022-08-20';
 
 function getTimeRemaining (endtime) {
     let days, hours, minutes, seconds;
-    const t = Date.parse(endtime) - Date.parse(new Date());       //Получаем сколько осталось времени до конца отсчета  //Использовали parse потому что дата была в строчном формате, а нам ее нужно получить для математического расчета
+    const t = Date.parse(endtime) - Date.parse(new Date());       //Получаем сколько осталось времени до конца отсчета  //Использовали parse потому что дата была в строчном формате, а нам ее нужно получить для математического расчета в миллисекундах
     
 
     //УСЛОВИЕ ЕСЛИ ВДРУГ АКЦИЯ ЗАКОНЧИТЬСЯ, МЫ ДЕЛАЕМ ЧТОБЫ ЗНАЧЕНИЯ В ТАКОМ СЛУЧАЕ БЫЛИ ПРОСТО НОЛЬ
@@ -242,6 +242,48 @@ premium.render();
 post.render();
 
 
+// Forms
+
+const forms = document.querySelectorAll('form');    //Получаем все формы
+
+const message = {
+    loading: 'Идет загрузка',
+    success: 'Все прошло успешно',
+    failure: 'Произошла ошибка!'
+};
+
+forms.forEach(item => {     //Присваиваем обработчик для каждой формы
+    postData(item);
+});
+
+function postData(form) {       //Функция постинга
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();     //Отменяем стандартное поведение браузера когда он перезажружается после отправки формы
+
+        const statusMessage = document.createElement('.div');   //Создаем окно отображения состояния запроса
+        statusMessage.classList.add('status');
+        statusMessage.textContent = message.loading;    //Сразу после отправки запроса высвечивается загрузка
+        form.append(statusMessage);     //Помещаем созданный блок с состоянием в самый конец формы
+    
+        const request = new XMLHttpRequest();
+        request.open('POST','server.php');
+
+        // request.setRequestHeader('Content-type', 'multipart/form-data');     //В комбинации XML и FormData заголовок не используется и ставиться автоматически
+        // formData - это один из форматов обмена данными с сервером как и json и такой формат сам формирует данные из форм
+        const formData = new FormData(form);
+
+        request.send(formData);
+
+        request.addEventListener('load', () => {
+            if(request.status === 200) {
+                console.log(request.response);
+                statusMessage.textContent = message.success;
+            } else {
+                statusMessage.textContent = message.failure;
+            }
+        });
+    });
+}
 
 
 });
