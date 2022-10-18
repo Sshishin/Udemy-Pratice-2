@@ -260,7 +260,7 @@ function postData(form) {       //Функция постинга
     form.addEventListener('submit', (e) => {
         e.preventDefault();     //Отменяем стандартное поведение браузера когда он перезажружается после отправки формы
 
-        const statusMessage = document.createElement('.div');   //Создаем окно отображения состояния запроса
+        const statusMessage = document.createElement('div');   //Создаем окно отображения состояния запроса
         statusMessage.classList.add('status');
         statusMessage.textContent = message.loading;    //Сразу после отправки запроса высвечивается загрузка
         form.append(statusMessage);     //Помещаем созданный блок с состоянием в самый конец формы
@@ -269,15 +269,31 @@ function postData(form) {       //Функция постинга
         request.open('POST','server.php');
 
         // request.setRequestHeader('Content-type', 'multipart/form-data');     //В комбинации XML и FormData заголовок не используется и ставиться автоматически
+        // request.setRequestHeader('Content-type', 'application/json');       //Для отправки в json формате
         // formData - это один из форматов обмена данными с сервером как и json и такой формат сам формирует данные из форм
         const formData = new FormData(form);
 
         request.send(formData);
 
+        // ****** Преобразование formdata к json формату
+
+        // const object = {}
+        // formData.forEach((value, key) => {
+        //     object[key] = value;
+        // });
+        // const json = JSON.stringify(object);
+        // request.send(json);
+
+        // ******
+
         request.addEventListener('load', () => {
             if(request.status === 200) {
                 console.log(request.response);
                 statusMessage.textContent = message.success;
+                form.reset();   //Очищается после отправки
+                setTimeout(() => {      //Удаляем сообщение о статусе через 2 секунды
+                    statusMessage.remove();
+                }, 2000);
             } else {
                 statusMessage.textContent = message.failure;
             }
