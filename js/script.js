@@ -301,8 +301,27 @@ function postData(form) {       //Функция постинга
     });
 }
 
+function showThanksModal() {
+    const prevModalDialog = document.querySelector('.modal__dialog');
+    prevModalDialog.classList.add('hide');      //Скрываем модальное окно
+    showModal();    //Делаем так что бы при исполнении функции модальное окно было открыто
+
+    const thanksModal = document.createElement('.div');     
+    thanksModal.classList.add('modal__dialog');     //Берем стили от удаленного модального окна
+    thanksModal.innerHTML = `
+        <div class="modal__content"> 
+            <div data-close class="modal__close">&times;</div>
+            <div class="modal__title">Мы свяжемся с вами как можно быстрее!</div>
+        </div>
+    `;
+}
+
+showThanksModal();
 
 });
+
+// End 7:00
+
 
 
 
