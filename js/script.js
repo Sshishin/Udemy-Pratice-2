@@ -119,8 +119,8 @@ setClock ('.timer', deadline);
 // Модальное окно
 
 const modalTrigger = document.querySelectorAll('[data-modal]'),
-      modalClose = document.querySelector('[data-close]'),
-      modal = document.querySelector('.modal');
+    //   modalClose = document.querySelector('[data-close]');  //Рефактор
+      modal = document.querySelector('.modal');      
 
 for(let i = 0; i < modalTrigger.length; i++) {
     modalTrigger[i].addEventListener('click', () => {
@@ -141,15 +141,15 @@ function closeModal() {
     clearInterval(modalTimerId);       //Если пользователь уже открыл окно, то убираем вызов через время
 }
 
-modalClose.addEventListener('click', () => {
-    closeModal();       //Так говорим чтобы браузер сам определился какое значение ему нужно
-});
+// modalClose.addEventListener('click', () => {
+//     closeModal();       //Так говорим чтобы браузер сам определился какое значение ему нужно
+// });  Рефактор
 
 
 // Делаем закрытие по темной области вне окна
 
 modal.addEventListener('click', (event) => {
-    if(event.target == modal) {
+    if(event.target == modal || event.target.getAttribute('data-close') == '') {       //После рефактора
         closeModal(); 
     }
 });
@@ -301,26 +301,34 @@ function postData(form) {       //Функция постинга
     });
 }
 
-function showThanksModal() {
+function showThanksModal(message) {
     const prevModalDialog = document.querySelector('.modal__dialog');
     prevModalDialog.classList.add('hide');      //Скрываем модальное окно
     showModal();    //Делаем так что бы при исполнении функции модальное окно было открыто
 
-    const thanksModal = document.createElement('.div');     
+    const thanksModal = document.createElement('div');     
     thanksModal.classList.add('modal__dialog');     //Берем стили от удаленного модального окна
     thanksModal.innerHTML = `
         <div class="modal__content"> 
             <div data-close class="modal__close">&times;</div>
-            <div class="modal__title">Мы свяжемся с вами как можно быстрее!</div>
+            <div class="modal__title">${message}</div>
         </div>
     `;
+    document.querySelector('.modal').append(thanksModal);
+
+    setTimeout(() => {
+        thanksModal.remove();
+        prevModalDialog.classList.add('show');
+        prevModalDialog.classList.remove('hide');
+        closeModal();
+    }, 4000);
 }
 
-showThanksModal();
+showThanksModal(message.success);
 
 });
 
-// End 7:00
+
 
 
 
