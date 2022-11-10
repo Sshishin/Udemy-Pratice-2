@@ -165,7 +165,7 @@ if(e.code == 'Escape' && modal.classList.contains('show')) {
 
 // Добавляем вызов окна через какое-то время
 
-// const modalTimerId = setTimeout(showModal, 5000);
+const modalTimerId = setTimeout(showModal, 50000);
 
 function showModalByScroll(){
     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {       // Если пролистанная часть страницы + видимая часть страницы >= всей страницы то...
@@ -247,7 +247,7 @@ post.render();
 const forms = document.querySelectorAll('form');    //Получаем все формы
 
 const message = {
-    loading: 'Идет загрузка',
+    loading: 'img/form/spinner.svg',
     success: 'Все прошло успешно',
     failure: 'Произошла ошибка!'
 };
@@ -260,10 +260,14 @@ function postData(form) {       //Функция постинга
     form.addEventListener('submit', (e) => {
         e.preventDefault();     //Отменяем стандартное поведение браузера когда он перезажружается после отправки формы
 
-        const statusMessage = document.createElement('div');   //Создаем окно отображения состояния запроса
-        statusMessage.classList.add('status');
-        statusMessage.textContent = message.loading;    //Сразу после отправки запроса высвечивается загрузка
-        form.append(statusMessage);     //Помещаем созданный блок с состоянием в самый конец формы
+        const statusMessage = document.createElement('img');   //Создаем окно отображения состояния запроса
+        statusMessage.src = message.loading;
+        statusMessage.style.cssText = `
+            display: block;
+            margin: 0 auto;
+        `;   //Сразу после отправки запроса высвечивается загрузка
+        // form.append(statusMessage);     //Помещаем созданный блок с состоянием в самый конец формы
+        form.insertAdjacentElement('afterend', statusMessage);     //Усовершенствованный вариант чтобы спиннер показывался после блока и в каждой форме одинаково
     
         const request = new XMLHttpRequest();
         request.open('POST','server.php');
@@ -289,13 +293,16 @@ function postData(form) {       //Функция постинга
         request.addEventListener('load', () => {
             if(request.status === 200) {
                 console.log(request.response);
-                statusMessage.textContent = message.success;
+                showThanksModal(message.success);
+                // statusMessage.textContent = message.success;     //ПР
                 form.reset();   //Очищается после отправки
-                setTimeout(() => {      //Удаляем сообщение о статусе через 2 секунды
+                // setTimeout(() => {      //Удаляем сообщение о статусе через 2 секунды
                     statusMessage.remove();
-                }, 2000);
+                // }, 2000);    //ПР
             } else {
-                statusMessage.textContent = message.failure;
+                // statusMessage.textContent = message.failure;     //ПР
+                showThanksModal(message.failure); 
+                    
             }
         });
     });
@@ -304,7 +311,7 @@ function postData(form) {       //Функция постинга
 function showThanksModal(message) {
     const prevModalDialog = document.querySelector('.modal__dialog');
     prevModalDialog.classList.add('hide');      //Скрываем модальное окно
-    showModal();    //Делаем так что бы при исполнении функции модальное окно было открыто
+    // showModal();    //Делаем так что бы при исполнении функции модальное окно было открыто
 
     const thanksModal = document.createElement('div');     
     thanksModal.classList.add('modal__dialog');     //Берем стили от удаленного модального окна
