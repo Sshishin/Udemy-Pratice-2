@@ -338,11 +338,21 @@ showThanksModal(message.success);
 
 
 
+// ****** fetch API
+// API -это доступ к свойствам и методам какого-то продукта и возможность получить частичное управление
 
 
 
 
-
+fetch('https://jsonplaceholder.typicode.com/posts', {
+    method: "POST",
+    body: JSON.stringify({name: 'Alex'}),
+    headers: {
+        'Content-type': 'application/json'
+    }
+})
+  .then(response => response.json())
+  .then(json => console.log(json));
 
 
 
