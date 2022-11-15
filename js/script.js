@@ -353,3 +353,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // })
     //   .then(response => response.json())
     //   .then(json => console.log(json))
+
+
+
+
+
+// ************** npm
+
+// Делаем инит
+// Говорим что нужно скачать
+// При загрузки стороннего проекта он будет без npm и их нужно догрузить самостоятельно изпользуюя npm i
+
+fetch('http://localhost:3000/menu')    //Так мы просто получаем всю базу данных
+.then(data => data.json())
+.then(res => console.log(res))
