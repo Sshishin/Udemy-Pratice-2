@@ -178,22 +178,33 @@ document.addEventListener('DOMContentLoaded', () => {
     
     
     // Классы ES6
+    // тут добавили элементы асинхронна после рефакторинга 
+
+    
         
     class MenuCard {
-        constructor(src, title, descr, price, parentSelector, ...classes) {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
+            this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.parent = document.querySelector(parentSelector);
             this.classes = classes;
+            this.parent = document.querySelector(parentSelector);
         }
     
         render() {
             const element = document.createElement('div');
-            this.classes.forEach(className => element.classList.add(className));
+
+            if(this.classes.length === 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else{
+                this.classes.forEach(className => element.classList.add(className));
+            }
+
             element.innerHTML = `
-                        <img src=${this.src} alt="vegy">
+                        <img src=${this.src} alt=${this.alt}>
                         <h3 class="menu__item-subtitle">Меню ${this.title}</h3>
                         <div class="menu__item-descr">${this.descr}</div>
                         <div class="menu__item-divider"></div>
@@ -206,40 +217,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     
     }
+
+    const getResources = async (url) => {     //Говорим функции что тут будет асинхронный код
+        const res = await fetch(url);
+
+        if(!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${res.status}`);  //Оператор ошибки выкидвается //Throw это генератр исключений он прерывает выполнение функции или передает управление на ближайший блок catch
+        }
+        return await res.json();
+
+    };
+
+    getResources('http://localhost:3000/menu')
+    .then(data => {
+        data.forEach(({img, altimg, title, descr, price}) => {
+            new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+        });
+    });
     
-    const div = new MenuCard(
-        "img/tabs/vegy.jpg",
-        '"Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        299,
-        '.menu .container',
-        'menu__item'
+    // const div = new MenuCard(
+    //     "img/tabs/vegy.jpg",
+    //     '"Фитнес"',
+    //     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    //     299,
+    //     '.menu .container',
+    //     'menu__item'
     
-    );
+    // );
     
-    const premium = new MenuCard(
-        "img/tabs/elite.jpg",
-        '"Премиум"',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        550,
-        '.menu .container',
-        'menu__item'
+    // const premium = new MenuCard(
+    //     "img/tabs/elite.jpg",
+    //     '"Премиум"',
+    //     'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+    //     550,
+    //     '.menu .container',
+    //     'menu__item'
     
-    );
+    // );
     
-    const post = new MenuCard(
-        "img/tabs/post.jpg",
-        '"Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        430,
-        '.menu .container',
-        'menu__item'
+    // const post = new MenuCard(
+    //     "img/tabs/post.jpg",
+    //     '"Постное"',
+    //     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+    //     430,
+    //     '.menu .container',
+    //     'menu__item'
     
-    );
+    // );
     
-    div.render();
-    premium.render();
-    post.render();
+    // div.render();
+    // premium.render();
+    // post.render();       //После рефакторинга
     
     
     // Forms
@@ -253,10 +281,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     forms.forEach(item => {     //Присваиваем обработчик для каждой формы
-        postData(item);
+        bindPostData(item);
     });
+
+    const postData = async (url, data) => {     //Говорим функции что тут будет асинхронный код
+        const res = await fetch(url, {      //Ставим await там где нам нужно дождаться выполнения операции
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+                },
+            body: data
+        });     //Так как это асинхронный код то респонс присовится к res только после получения данных и ниже мы получим ошибку
+        return await res.json();  //Возвращаем в формате json чтобы в дальнейшем уже работать с json форматом и на это требуется время поэтому ставим await
+
+    };
     
-    function postData(form) {       //Функция постинга
+    function bindPostData(form) {       //Функция постинга
         form.addEventListener('submit', (e) => {
             e.preventDefault();     //Отменяем стандартное поведение браузера когда он перезажружается после отправки формы
     
@@ -280,20 +320,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // ****** Преобразование formdata к json формату
     
-            const object = {}
-            formData.forEach((value, key) => {
-                object[key] = value;
-            });
+            // const object = {}
+            // formData.forEach((value, key) => {
+            //     object[key] = value;
+            // });  Убрали после рефакторинга и заменили json
+
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));  //Замена object  //Сначала создаем массив массивов, потом приводим обратно к объекту и передаем в json
     
             // ******
     
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
+            // fetch('server.php', {
+            //     method: "POST",
+            //     headers: {
+            //         'Content-type': 'application/json'
+            //     },
+            //     body: JSON.stringify(object)
+            // })   //Произошел рефакторинг
+            
+            postData(' http://localhost:3000/requests', json)
+            // .then(data => data.text())      //Реф и убрали так как происходит на этапе postData
             .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -367,3 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
 fetch('http://localhost:3000/menu')    //Так мы просто получаем всю базу данных
 .then(data => data.json())
 .then(res => console.log(res))
+
+
+
+
+
+
+// ********************* .async .await
