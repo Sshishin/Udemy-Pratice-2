@@ -421,50 +421,111 @@ fetch('http://localhost:3000/menu')    //Так мы просто получае
 //Slider
 // Самостотельно написанный
 
+// const slides = document.querySelectorAll('.offer__slide');
+// const prev = document.querySelector('.offer__slider-prev');
+// const next = document.querySelector('.offer__slider-next');
+// const current = document.getElementById('current');
+
+// let i = 0;
+
+// function hideCard() {
+//     slides.forEach(item => {
+//         item.classList.add('hide');
+//     });
+//     current.innerHTML = `0${i+1}`;
+// }
+
+// function showCard(){
+//     slides[i].classList.remove('hide');
+//     slides[i].classList.add('show');
+// }
+
+// hideCard();
+// showCard();
+
+// prev.addEventListener('click', (e) => {
+//     if(i <= 0) {
+//         i = 3;
+//         hideCard();
+//         showCard();
+//     } else {
+//         hideCard();
+//         i--;
+//         showCard();
+//         current.innerHTML = `0${i+1}`;
+//     }
+// });
+
+// next.addEventListener('click', (e) => {
+//     if(i >= slides.length - 1) {
+//         i = 0;
+//         hideCard();
+//         showCard();
+//     } else {
+//         hideCard();
+//         i++;
+//         showCard();
+//         current.innerHTML = `0${i+1}`;
+//         }
+// });
+
+
+
+// Более сложный вариант слайдера
+
+
 const slides = document.querySelectorAll('.offer__slide');
 const prev = document.querySelector('.offer__slider-prev');
 const next = document.querySelector('.offer__slider-next');
 const current = document.getElementById('current');
+const slidesWrapper = document.querySelector('.offer__slider-wrapper');
+const slidesInner = document.querySelector('.offer__slider-inner');
+const width = window.getComputedStyle(slidesWrapper).width;     //Получаем примененные свойства из css
 
-let i = 0;
+let slideIndex = 1;
+let offset = 0;
 
-function hideCard() {
-    slides.forEach(item => {
-        item.classList.add('hide');
-    });
-    current.innerHTML = `0${i+1}`;
+slidesInner.style.width = 100 * slides.length + '%';    //Резервируем место под все наши элементы карусели
+slidesInner.style.display = 'flex';
+slidesInner.style.transition = '0.5s all';
+slidesWrapper.style.overflow = 'hidden';
+
+slides.forEach(slide => {
+    slide.style.width = width;      //Каждый слайд будет равен окну демонстрации
+});
+
+next.addEventListener('click', () => {
+if(offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+    offset = 0;
+} else {
+    offset += +width.slice(0, width.length - 2)
 }
 
-function showCard(){
-    slides[i].classList.remove('hide');
-    slides[i].classList.add('show');
-}
+    slidesInner.style.transform = `translateX(-${offset}px)`;
 
-hideCard();
-showCard();
-
-prev.addEventListener('click', (e) => {
-    if(i <= 0) {
-        hideCard();
-        i = 0;
-        showCard();
+    if(slideIndex == slides.length) {
+        slideIndex = 1;
     } else {
-        hideCard();
-        i--;
-        showCard();
-        current.innerHTML = `0${i+1}`;
+        slideIndex++;
     }
+
+    current.innerHTML = `0${slideIndex}`;
 });
 
-next.addEventListener('click', (e) => {
-    if(i >= slides.length - 1) {
-        hideCard();
-        i = 3;
-        showCard();
+prev.addEventListener('click', () => {
+    if(offset == 0) {
+        offset = +width.slice(0, width.length - 2) * (slides.length - 1);
     } else {
-        hideCard();
-        i++;
-        showCard();
-        current.innerHTML = `0${i+1}`;
+        offset -= +width.slice(0, width.length - 2);
+    }
+    
+        slidesInner.style.transform = `translateX(-${offset}px)`;
+
+        if(slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
         }
-});
+    
+        current.innerHTML = `0${slideIndex}`;
+    });
