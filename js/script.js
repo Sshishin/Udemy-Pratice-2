@@ -228,14 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     };
 
-    // getResources('http://localhost:3000/menu')
-    // .then(data => {
-    //     data.forEach(({img, altimg, title, descr, price}) => {
-    //         new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-    //     });
-    // });  //Заменили это библиотекой axios
-
-    axios.get('http://localhost:3000/menu')
+    getResources('http://localhost:3000/menu')
     .then(data => {
         data.forEach(({img, altimg, title, descr, price}) => {
             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
@@ -425,3 +418,53 @@ fetch('http://localhost:3000/menu')    //Так мы просто получае
 
 
 
+//Slider
+// Самостотельно написанный
+
+const slides = document.querySelectorAll('.offer__slide');
+const prev = document.querySelector('.offer__slider-prev');
+const next = document.querySelector('.offer__slider-next');
+const current = document.getElementById('current');
+
+let i = 0;
+
+function hideCard() {
+    slides.forEach(item => {
+        item.classList.add('hide');
+    });
+    current.innerHTML = `0${i+1}`;
+}
+
+function showCard(){
+    slides[i].classList.remove('hide');
+    slides[i].classList.add('show');
+}
+
+hideCard();
+showCard();
+
+prev.addEventListener('click', (e) => {
+    if(i <= 0) {
+        hideCard();
+        i = 0;
+        showCard();
+    } else {
+        hideCard();
+        i--;
+        showCard();
+        current.innerHTML = `0${i+1}`;
+    }
+});
+
+next.addEventListener('click', (e) => {
+    if(i >= slides.length - 1) {
+        hideCard();
+        i = 3;
+        showCard();
+    } else {
+        hideCard();
+        i++;
+        showCard();
+        current.innerHTML = `0${i+1}`;
+        }
+});
