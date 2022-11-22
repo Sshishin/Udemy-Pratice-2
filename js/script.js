@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     showThanksModal(message.success);
     
-    });
+  
     
     
     
@@ -601,4 +601,82 @@ dots.forEach(dot => {
         dots.forEach(item => item.style.opacity = '.5');
         dots[slideIndex - 1].style.opacity = 1;
     });
+
+});
+
+// Calc
+
+const counter = document.querySelector('.calculating__result span');
+let sex = 'female',
+ weight, height, age, 
+ ratio = '1.2';
+
+function calcTotal() {
+    if(!sex || !weight || !height || !age || !ratio) {
+        counter.textContent = 'Ошибка';
+        return;
+    }
+
+    if(sex === 'female') {
+       counter.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+    } else {
+        counter.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
+    }
+
+}
+
+calcTotal();
+
+function getStaticInformation (parentSelector, activeClass) {
+    const elements = document.querySelectorAll(`${parentSelector} div`);
+
+    elements.forEach(elem => {
+        elem.addEventListener('click', (e) => {
+            if(e.target.getAttribute('data-ratio')) {   //Если есть такой блок то мы понимаем что работает с блоком активности если нет то другой блок
+                ratio = +e.target.getAttribute('data-ratio');
+            } else {
+                sex = e.target.getAttribute('id');
+            }
+    
+            elements.forEach(elem => {
+                elem.classList.remove(activeClass);
+            });
+    
+            e.target.classList.add(activeClass);
+    
+            calcTotal();
+        });
+    });
+
+}
+getStaticInformation ('#gender', 'calculating__choose-item_active'); 
+getStaticInformation ('.calculating__choose_big', 'calculating__choose-item_active'); 
+
+    function getDynamicInformation(selector) {
+        const input = document.querySelector(selector);
+
+        input.addEventListener('input', () => {
+            switch(input.getAttribute('id')) {
+                case 'height':
+                    height = +input.value;
+                    break;
+
+                case 'weight':
+                    weight = +input.value;
+                    break;
+                    
+                case 'age':
+                    age = +input.value;
+                    break;   
+            }
+            calcTotal();
+        });
+
+       
+    }
+
+    getDynamicInformation('#height');
+    getDynamicInformation('#weight');
+    getDynamicInformation('#age');
+
 });
