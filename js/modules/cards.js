@@ -1,3 +1,5 @@
+import {getResources} from '../services/services';
+
 function cards() {
 // Классы ES6
     // тут добавили элементы асинхронна после рефакторинга 
@@ -40,15 +42,7 @@ function cards() {
     
     }
 
-    const getResources = async (url) => {     //Говорим функции что тут будет асинхронный код
-        const res = await fetch(url);
-
-        if(!res.ok) {
-            throw new Error(`Could not fetch ${url}, status ${res.status}`);  //Оператор ошибки выкидвается //Throw это генератр исключений он прерывает выполнение функции или передает управление на ближайший блок catch
-        }
-        return await res.json();
-
-    };
+   
 
     getResources('http://localhost:3000/menu')
     .then(data => {
@@ -92,4 +86,4 @@ function cards() {
     // post.render();       //После рефакторинга
 }
 
-module.exports = cards;
+export default cards;

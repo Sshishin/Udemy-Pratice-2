@@ -1,9 +1,9 @@
-function tabs() {
+function tabs(tabsSelector, tabsContentSelector, tabsParentSelector, activeClass) {
     //Табы
     
-    const tabs = document.querySelectorAll('.tabheader__item'),
-          tabsContent = document.querySelectorAll('.tabcontent'),
-          tabsParent = document.querySelector('.tabheader__items');     
+    const tabs = document.querySelectorAll(tabsSelector),
+          tabsContent = document.querySelectorAll(tabsContentSelector),
+          tabsParent = document.querySelector(tabsParentSelector);     
     
     
     
@@ -13,13 +13,13 @@ function tabs() {
         }); 
     
         tabs.forEach(item => {
-            item.classList.remove('tabheader__item_active');        //Удаляем выделение активности кнопки   //Не ставим точку потому что и так работаем с классами
+            item.classList.remove(activeClass);        //Удаляем выделение активности кнопки   //Не ставим точку потому что и так работаем с классами
         });
     }
     
     function showContent(i = 0) {
         tabsContent[i].style.display = 'block';
-        tabs[i].classList.add('tabheader__item_active');        //Здесб доп классом можно добавить например еще и анимацию
+        tabs[i].classList.add(activeClass);        //Здесб доп классом можно добавить например еще и анимацию
     }
     
     hideTabContent();
@@ -29,7 +29,7 @@ function tabs() {
     tabsParent.addEventListener('click', (event) => {
         const target = event.target;
     
-            if(target && target.classList.contains('tabheader__item')) {        //Такой опрератор И чтобы мы при клики попали именно на элемент нужный а не в пустое место
+            if(target && target.classList.contains(tabsSelector.slice(1))) {        //Такой опрератор И чтобы мы при клики попали именно на элемент нужный а не в пустое место
                 tabs.forEach((item,i) => {
                     if(target == item) {        //Если выбранный элемент идентичен какому-то элементу из подходящих,то ...
                         hideTabContent();
@@ -40,4 +40,4 @@ function tabs() {
         });
 }
 
-module.exports = tabs;
+export default tabs;

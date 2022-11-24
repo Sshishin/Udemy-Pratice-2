@@ -118,4 +118,4 @@ getStaticInformation ('.calculating__choose_big div', 'calculating__choose-item_
 
 }
 
-module.exports = calc;
+export default calc;

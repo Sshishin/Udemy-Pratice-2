@@ -1,4 +1,4 @@
-function slider() {
+function slider({container, slide, nextArrow, previousArrow, currentCounter, wrapper, inner}) {
     //Slider
 // Самостотельно написанный
 
@@ -55,13 +55,13 @@ function slider() {
 // Более сложный вариант слайдера
 
 
-const slides = document.querySelectorAll('.offer__slide');
-const slider = document.querySelector('.offer__slider');
-const prev = document.querySelector('.offer__slider-prev');
-const next = document.querySelector('.offer__slider-next');
-const current = document.getElementById('current');
-const slidesWrapper = document.querySelector('.offer__slider-wrapper');
-const slidesInner = document.querySelector('.offer__slider-inner');
+const slides = document.querySelectorAll(slide);
+const slider = document.querySelector(container);
+const prev = document.querySelector(previousArrow);
+const next = document.querySelector(nextArrow);
+const current = document.getElementById(currentCounter);
+const slidesWrapper = document.querySelector(wrapper);
+const slidesInner = document.querySelector(inner);
 const width = window.getComputedStyle(slidesWrapper).width;     //Получаем примененные свойства из css
 
 let slideIndex = 1;
@@ -186,4 +186,4 @@ dots.forEach(dot => {
 });
 }
 
-module.exports = slider;
+export default slider;

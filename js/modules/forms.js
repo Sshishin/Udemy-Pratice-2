@@ -1,7 +1,10 @@
-function forms() {
+import {closeModal, showModal} from './modal';
+import {postData} from '../services/services';
+
+function forms(formSelector, modalTimerId) {
        // Forms
     
-       const forms = document.querySelectorAll('form');    //Получаем все формы
+       const forms = document.querySelectorAll(formSelector);    //Получаем все формы
     
        const message = {
            loading: 'img/form/spinner.svg',
@@ -13,17 +16,7 @@ function forms() {
            bindPostData(item);
        });
    
-       const postData = async (url, data) => {     //Говорим функции что тут будет асинхронный код
-           const res = await fetch(url, {      //Ставим await там где нам нужно дождаться выполнения операции
-               method: "POST",
-               headers: {
-                   'Content-type': 'application/json'
-                   },
-               body: data
-           });     //Так как это асинхронный код то респонс присовится к res только после получения данных и ниже мы получим ошибку
-           return await res.json();  //Возвращаем в формате json чтобы в дальнейшем уже работать с json форматом и на это требуется время поэтому ставим await
-   
-       };
+       
        
        function bindPostData(form) {       //Функция постинга
            form.addEventListener('submit', (e) => {
@@ -85,7 +78,7 @@ function forms() {
        function showThanksModal(message) {
            const prevModalDialog = document.querySelector('.modal__dialog');
            prevModalDialog.classList.add('hide');      //Скрываем модальное окно
-           // showModal();    //Делаем так что бы при исполнении функции модальное окно было открыто
+           showModal('.modal', modalTimerId);    //Делаем так что бы при исполнении функции модальное окно было открыто
        
            const thanksModal = document.createElement('div');     
            thanksModal.classList.add('modal__dialog');     //Берем стили от удаленного модального окна
@@ -101,7 +94,7 @@ function forms() {
                thanksModal.remove();
                prevModalDialog.classList.add('show');
                prevModalDialog.classList.remove('hide');
-               closeModal();
+               closeModal('.modal');
            }, 4000);
        }
        
@@ -109,4 +102,4 @@ function forms() {
           
 }
 
-module.exports = forms;
+export default forms;

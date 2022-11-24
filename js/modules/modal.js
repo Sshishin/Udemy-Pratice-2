@@ -1,29 +1,34 @@
 // Модальное окно
-    
-function modal() {
-    const modalTrigger = document.querySelectorAll('[data-modal]'),
-    //   modalClose = document.querySelector('[data-close]');  //Рефактор
-      modal = document.querySelector('.modal');      
-    
-    for(let i = 0; i < modalTrigger.length; i++) {
-    modalTrigger[i].addEventListener('click', () => {
-        showModal();      
-    });
-    }
-    
-    function showModal() {
+
+function showModal(modalSelector, modalTimerId) {
+    const modal = document.querySelector(modalSelector); 
     modal.classList.add('show');
     modal.classList.remove('hide');
     document.body.style.overflow = 'hidden'; //Так запрещаем скролл при открытом модальном окне
+    if(modalTimerId) {
+        clearInterval(modalTimerId);
+    }
     }
     
-    function closeModal() {
+    function closeModal(modalSelector) {
+    const modal = document.querySelector(modalSelector); 
     modal.classList.add('hide');
     modal.classList.remove('show');
     document.body.style.overflow = '';  
-    clearInterval(modalTimerId);       //Если пользователь уже открыл окно, то убираем вызов через время
+           //Если пользователь уже открыл окно, то убираем вызов через время
     }
     
+    
+function modal(triggerSelector, modalSelector, modalTimerId) {
+    const modalTrigger = document.querySelectorAll(triggerSelector),
+    //   modalClose = document.querySelector('[data-close]');  //Рефактор
+      modal = document.querySelector(modalSelector);      
+    
+    for(let i = 0; i < modalTrigger.length; i++) {
+    modalTrigger[i].addEventListener('click',() => showModal(modalSelector, modalTimerId));   
+    }
+    
+
     // modalClose.addEventListener('click', () => {
     //     closeModal();       //Так говорим чтобы браузер сам определился какое значение ему нужно
     // });  Рефактор
@@ -33,7 +38,7 @@ function modal() {
     
     modal.addEventListener('click', (event) => {
     if(event.target == modal || event.target.getAttribute('data-close') == '') {       //После рефактора
-        closeModal(); 
+        closeModal(modalSelector); 
     }
     });
     
@@ -42,17 +47,14 @@ function modal() {
     
     document.addEventListener('keydown', (e) => {
     if(e.code == 'Escape' && modal.classList.contains('show')) {
-    closeModal();
+    closeModal(modalSelector);
     }
     });
     
-    // Добавляем вызов окна через какое-то время
-    
-    const modalTimerId = setTimeout(showModal, 50000);
     
     function showModalByScroll(){
     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {       // Если пролистанная часть страницы + видимая часть страницы >= всей страницы то...
-        showModal();
+        showModal(modalSelector, modalTimerId);
         window.removeEventListener('scroll',showModalByScroll);     //Делаем так чтобы при долистывании до конца страницы, окно появлялось только один раз
     }
     }
@@ -61,4 +63,6 @@ function modal() {
         
 }
 
-module.exports = modal;
+export default modal;
+export {closeModal};
+export {showModal};
